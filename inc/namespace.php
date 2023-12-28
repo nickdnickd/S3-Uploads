@@ -6,7 +6,14 @@ function init() {
 	// Ensure the AWS SDK can be loaded.
 	if ( ! class_exists( '\\Aws\\S3\\S3Client' ) ) {
 		// Require AWS Autoloader file.
-		require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+		// Require the file to be included from either the local vendor folder or the bedrock vendor folder.
+		if ( file_exists( dirname( __DIR__ ) . '/vendor/autoload.php' ) ) {
+			require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+		} elseif ( file_exists( dirname( __DIR__, 3 ) . '/vendor/autoload.php' ) ) {
+			require_once dirname( __DIR__, 3 ) . '/vendor/autoload.php';
+		} else {
+			wp_die( 'AWS SDK not found. Please run composer install.' );
+		}
 	}
 
 	if ( ! check_requirements() ) {
